@@ -1,0 +1,266 @@
+/*
+Copyright 2018. All rights reserved.
+Shanghai Jiao Tong University, China
+
+*/
+#include "FastVO/icp_fr2model.h"
+#include <pcl/registration/icp.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <FastVO/config.h>
+namespace FastVO
+{
+    ICP_fr2model::ICP_fr2model()
+    {
+        max_iteration_ = Config::get<int> ("maxnum.iteration");
+        k_closetpoint_ = Config::get<int> ("closetpoint.k" );
+        tolerance_t_ = Config::get<double> ("tolerance.t" );
+        tolerance_r_ = Config::get<double> ("tolerance.r" );
+    }
+    ICP_fr2model::~ICP_fr2model()
+    {
+    }
+    bool SortFunction ( Eigen::Vector3d i, Eigen::Vector3d  j) 
+    { 
+        return (i(2) < j(2)); 
+    }
+    void transformCovariance ( vector<Eigen::Matrix3d> & source_cov, vector<Eigen::Matrix3d> & trans_cov,  Eigen::Matrix4d & transformation_matrix)
+    {
+        Eigen::Matrix3d T_c_r_R;
+        Eigen::Vector3d T_c_r_Trans;
+        T_c_r_R = transformation_matrix.block<3,3>(0,0);
+        T_c_r_Trans = transformation_matrix.block<3,1>(0,3);
+        vector<Eigen::Matrix3d> copy_cov( source_cov ) ;
+        trans_cov. clear();
+        for (size_t i = 0; i < copy_cov.size(); ++i)
+        {
+           trans_cov.push_back( T_c_r_R * copy_cov[i] * T_c_r_R.transpose() );
+        }
+    }
+    void getChangesInTransformation (double & dR, double & dT, int num_iter, vector<Eigen::Matrix4d> &  record_trans)
+    {
+        dR = 0;
+        dT = 0;
+        int count = 0;
+        double rdiff;
+        double tdiff;
+        for( int k= max(num_iter-2, 1); k!=num_iter; k++)
+        {
+            SE3 Trans_k = SE3( SO3(record_trans[k].block<3,3>(0,0)), record_trans[k].block<3,1>(0,3));
+            SE3 Trans_k_1 = SE3( SO3(record_trans[k+1].block<3,3>(0,0)), record_trans[k+1].block<3,1>(0,3));
+            Eigen::Matrix<double,1, 4> qs_k ( Trans_k.unit_quaternion().w(), Trans_k.unit_quaternion().x(), Trans_k.unit_quaternion().y(), Trans_k.unit_quaternion().z()) ;
+            Eigen::Matrix<double,1, 4> qs_k_1 ( Trans_k_1.unit_quaternion().w(), Trans_k_1.unit_quaternion().x(), Trans_k_1.unit_quaternion().y(), Trans_k_1.unit_quaternion().z()) ;
+            // Rotation difference in radians
+            rdiff = acos( qs_k.dot(qs_k_1) / qs_k.norm() / qs_k_1.norm() );
+            // Euclidean difference
+            tdiff = ( Trans_k.translation() - Trans_k_1.translation() ).norm() ;
+            dR = dR + rdiff;
+            dT = dT + tdiff;
+            count = count + 1;
+        }
+         dT = dT/count;
+         dR = dR/count;
+    }
+    void Golden_Section_Search( double inlierRatio_low, double inlierRatio_high, double & epison1,  double & epison2)
+    {
+        double fraction_w = 0.38197;
+        epison1 = inlierRatio_low+fraction_w*(inlierRatio_high-inlierRatio_low);
+        epison2 = inlierRatio_high-fraction_w*(inlierRatio_high-inlierRatio_low);
+    }
+    double Calculate_Fai( vector<int> & inliers_indices_src, vector<int> & inliers_indices_mdl, vector<double> & inliers_indices_dist, int pc_count, float inlierRatio )
+    {
+         int upperbound = cvRound(inlierRatio*pc_count);
+         vector<double> inliers_indices_dist_upperbound;
+         double sum_indices = accumulate(inliers_indices_dist_upperbound.begin(),inliers_indices_dist_upperbound.end(),0);   
+         double Err = sqrt (sum_indices / inliers_indices_dist_upperbound.size());
+         return Err/inlierRatio*3;
+    }
+    void ICP_fr2model::findInliersRatio( vector<Eigen::Vector3d> id_dist_closetpts ,float & inliers_ratio )
+    {
+        double inlierRatio_low = 0.4;
+        double inlierRatio_high = 1;
+        double epison1;
+        double epison2;
+        double Fai1;
+        double Fai2;
+        double Fai3;
+        int num_iter = 8;  // the number of iteration for finding a best inliers ratio
+        vector<int> inliers_indices_src;
+        vector<int> inliers_indices_mdl;
+        vector<double> inliers_indices_dist;
+        int pc_count = id_dist_closetpts.size();
+         for(int i =0; i < id_dist_closetpts.size(); i++)
+         {
+             inliers_indices_src.push_back(id_dist_closetpts[i](0));
+             inliers_indices_mdl.push_back(id_dist_closetpts[i](1));
+             inliers_indices_dist.push_back(id_dist_closetpts[i](2));
+        }
+        Golden_Section_Search(inlierRatio_low,inlierRatio_high,epison1,epison2);
+        for( int  i =1; i <= num_iter;i++)
+        {
+            Fai1 = Calculate_Fai(inliers_indices_src, inliers_indices_mdl, inliers_indices_dist, pc_count, inlierRatio_low);
+            Fai2 = Calculate_Fai(inliers_indices_src, inliers_indices_mdl, inliers_indices_dist, pc_count, epison1);
+            if ( Fai2 > Fai1 )
+            {
+                 inlierRatio_high = epison1;
+                 Golden_Section_Search(inlierRatio_low,inlierRatio_high,epison1,epison2);
+            }
+            else
+            {
+                Fai3 = Calculate_Fai(inliers_indices_src, inliers_indices_mdl, inliers_indices_dist, pc_count, epison2);
+               if ( Fai3 > Fai2 )
+               {
+                   inlierRatio_low = epison1;
+                   inlierRatio_high = epison2;
+                   Golden_Section_Search(inlierRatio_low,inlierRatio_high,epison1,epison2);
+               }
+               else
+               {
+                   inlierRatio_low = epison2;
+                   Golden_Section_Search(inlierRatio_low,inlierRatio_high,epison1,epison2);
+               }
+            }
+        }
+        inliers_ratio = (inlierRatio_low+inlierRatio_high)/2;
+    }
+    void ICP_fr2model::poseEstimation_SICP( pcl::PointCloud<pcl::PointXYZ>::Ptr model,  pcl::PointCloud<pcl::PointXYZ>::Ptr transform_pc , pcl::PointCloud<pcl::PointXYZ>::Ptr source, vector<Eigen::Matrix3d> & model_cov, vector<Eigen::Matrix3d> & source_cov, vector<Eigen::Matrix3d> & trans_cov , SE3 T_w_c)
+    {
+       // cout<<"--------------------ICP algorithm Starts!--------------------"<<endl;
+        Eigen::Matrix4d initial_transformation_matrix ( T_w_c.matrix() );
+      //  cout<<initial_transformation_matrix<<endl;
+        //cout<<T_w_c.rotation_matrix()<<endl<<T_w_c.translation()<<endl;
+        vector<Eigen::Vector3d>  id_dist_closetpts;
+        vector<int> indices_src;
+        vector<int> indices_mdl;
+        vector<int> inliers_indices_src;
+        vector<int> inliers_indices_mdl;
+        vector<double> squaredError;
+        vector<Eigen::Matrix4d> record_trans;
+        Eigen::Matrix4d final_transformation_matrix;
+        
+        // Define  two criterias for the convergence
+        double dR;
+        double dT;
+        int stopIteration = max_iteration_;
+        float inliers_ratio = 0.8;
+        // Transform the source point cloud by the initial_transformation_matrix
+        pcl::transformPointCloud (*source, *transform_pc, initial_transformation_matrix);
+        transformCovariance(source_cov, trans_cov, initial_transformation_matrix);
+        final_transformation_matrix = initial_transformation_matrix;//Eigen::Matrix4d::Identity(); 
+        
+        //Create the kdtree of model
+        pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
+        kdtree.setInputCloud( model );
+        cout<<"-----------Create The Kdtree of Model. Success!!!-----------"<<endl;
+        // Create the SVD algorithm 
+        cout<< "----------Start ICP Algorithm!!!----------"<<endl;
+         pcl::registration::TransformationEstimationSVD<pcl::PointXYZ, pcl::PointXYZ, double>::Ptr trans_svd (new pcl::registration::TransformationEstimationSVD<pcl::PointXYZ, pcl::PointXYZ, double>);
+        // Start the improved ICP algorithm
+        for( int num_iter=1; num_iter <= max_iteration_; ++num_iter )
+        {  
+            // Define a transform matrix to store the resultant matrix during the each iteration 
+           Eigen::Matrix<double, 4, 4> transformation_matrix = Eigen::Matrix4d::Identity ();
+            
+            // Find Auto_inlierRatio at the beginning of iteration
+
+            // Find the K closet points by Mahalanobis distance 
+            findMahalanobisClosetpoint( k_closetpoint_, kdtree, model, transform_pc, model_cov, trans_cov, id_dist_closetpts, indices_src, indices_mdl);
+            
+            // Sort the indices by the standard of the smallest Mahalanobis
+            sort(id_dist_closetpts.begin(), id_dist_closetpts.end(), SortFunction);
+            inliers_indices_src.clear();
+            inliers_indices_mdl.clear();
+            if (num_iter == 1 )
+            {
+                findInliersRatio( id_dist_closetpts , inliers_ratio );
+                cout<< "----------inliers_ratio----------"<<inliers_ratio<<endl;
+            }
+            for(int i =0; i<cvRound(id_dist_closetpts.size()*inliers_ratio); i++)
+            {
+                inliers_indices_src.push_back(id_dist_closetpts[i](0));
+                inliers_indices_mdl.push_back(id_dist_closetpts[i](1));
+            }
+            
+            // Estimate transformation given correspondences
+            trans_svd->estimateRigidTransformation(*transform_pc, inliers_indices_src ,*model, inliers_indices_mdl, transformation_matrix);  
+            
+            // Update the total transformation
+            final_transformation_matrix = transformation_matrix * final_transformation_matrix;
+           
+            //Transform the current point cloud
+            pcl::transformPointCloud (*transform_pc, *transform_pc, transformation_matrix);
+            transformCovariance(trans_cov, trans_cov, transformation_matrix); 
+            record_trans.push_back(transformation_matrix);
+            
+            // Check convergence  
+            if( num_iter > 1)
+            { 
+                stopIteration = num_iter;
+                getChangesInTransformation( dR, dT, num_iter, record_trans);
+                if ( dR <= tolerance_r_ && dT <= tolerance_t_)
+                    break;
+            }
+        }
+         cout<< "----------ICP stopIteration: "<< stopIteration<<"----------"<<endl;
+        // store  the estimated  transformation matrix
+        Eigen::Matrix3d T_c_r_R;
+        Eigen::Vector3d T_c_r_Trans;
+        T_c_r_R = final_transformation_matrix.block<3,3>(0,0);
+        T_c_r_Trans = final_transformation_matrix.block<3,1>(0,3);
+        Trans_c_w_ = SE3( SO3(T_c_r_R), T_c_r_Trans);
+        cout << T_c_r_R << "    "<<T_c_r_Trans<<endl;
+        // store the corresponding indices
+         final_corresponding_indices_.swap(id_dist_closetpts);
+       
+    }
+    void  ICP_fr2model::findMahalanobisClosetpoint ( int K, pcl::KdTreeFLANN<pcl::PointXYZ> & kdtree, pcl::PointCloud<pcl::PointXYZ>::Ptr model, pcl::PointCloud<pcl::PointXYZ>::Ptr source, vector<Eigen::Matrix3d> & model_cov, vector<Eigen::Matrix3d> & source_cov,  vector<Eigen::Vector3d> & id_dist_closetpts , vector<int> & indices_src, vector<int> & indices_mdl  )
+    {
+        indices_src.clear();
+        indices_mdl.clear();
+        id_dist_closetpts.clear();
+        vector<int> pointIdxNKNSearch(K);
+        vector<float> pointNKNSquaredDistance(K);
+        vector<double> pointNKNMahalanobisDistance(K);
+        // find the K closet point
+        for( int j = 0;  j < source->size(); ++j)
+        {
+            pcl::PointXYZ search_point = source->points[j];
+            Eigen::Vector3d source_pts;
+            Eigen::Vector3d model_pts;
+            double Mahalanobis_id;
+            double Euclidean_distance;
+            double Mahalanobis_distance;
+            indices_src.push_back ( j );
+            
+            pointIdxNKNSearch.clear();
+            pointNKNSquaredDistance.clear();
+            pointNKNMahalanobisDistance.clear();
+            
+            if( kdtree.nearestKSearch(search_point, K, pointIdxNKNSearch, pointNKNSquaredDistance ) > 0 && pointIdxNKNSearch.size() == K && pointNKNSquaredDistance.size()==K )
+            {
+                for  (size_t i = 0 ; i < pointIdxNKNSearch.size() ; ++i)
+                {
+                   model_pts<<model->points[ pointIdxNKNSearch[i] ].x, model->points[ pointIdxNKNSearch[i] ].y, model->points[ pointIdxNKNSearch[i] ].z;
+                   source_pts<< search_point.x, search_point.y, search_point.z;
+                   Mahalanobis_distance = (source_pts - model_pts).transpose()*(source_cov[j]+model_cov[i])*(source_pts - model_pts);
+                   pointNKNMahalanobisDistance.push_back(Mahalanobis_distance);
+                }
+                if( pointNKNMahalanobisDistance.size() == K)
+                {
+                    auto smallest_Mahalanobis = min_element(pointNKNMahalanobisDistance.begin(), pointNKNMahalanobisDistance.end());  
+                    Mahalanobis_id = (double) pointIdxNKNSearch[  distance(pointNKNMahalanobisDistance.begin(), smallest_Mahalanobis) ];
+                    Euclidean_distance =  (double) pointNKNSquaredDistance[ distance(pointNKNMahalanobisDistance.begin(), smallest_Mahalanobis) ];
+                    id_dist_closetpts.push_back( Vector3d( (double) j, Mahalanobis_id, Euclidean_distance) );
+                    indices_mdl.push_back( pointIdxNKNSearch[  distance(pointNKNMahalanobisDistance.begin(), smallest_Mahalanobis) ] );
+                }
+                else
+                {
+                    cerr<<"the size of closet Mahalanobis distance points are equal as K!!!!!!!!!!!!! ";
+                }
+            }
+            else
+            {
+                cerr<<"it fails when finding the K closet point!";
+            }
+        }
+    }
+}

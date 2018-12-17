@@ -1,0 +1,42 @@
+[
+{
+  "directory": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/build/src",
+  "command": "g++   -DDISABLE_PCAP -DDISABLE_PNG -DFastVO_EXPORTS -std=c++11 -march=native -O3  -Wno-deprecated -g -fPIC -I/usr/include/eigen3 -I/usr/local/include -I/usr/local/include/opencv -I/usr/include/vtk-5.8 -I/usr/include/pcl-1.7 -I/usr/include/ni -I/usr/include/openni2 -I/home/mclarry/Sophus -I/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/include    -o CMakeFiles/FastVO.dir/frame.cpp.o -c /home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/frame.cpp",
+  "file": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/frame.cpp"
+},
+{
+  "directory": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/build/src",
+  "command": "g++   -DDISABLE_PCAP -DDISABLE_PNG -DFastVO_EXPORTS -std=c++11 -march=native -O3  -Wno-deprecated -g -fPIC -I/usr/include/eigen3 -I/usr/local/include -I/usr/local/include/opencv -I/usr/include/vtk-5.8 -I/usr/include/pcl-1.7 -I/usr/include/ni -I/usr/include/openni2 -I/home/mclarry/Sophus -I/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/include    -o CMakeFiles/FastVO.dir/model.cpp.o -c /home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/model.cpp",
+  "file": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/model.cpp"
+},
+{
+  "directory": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/build/src",
+  "command": "g++   -DDISABLE_PCAP -DDISABLE_PNG -DFastVO_EXPORTS -std=c++11 -march=native -O3  -Wno-deprecated -g -fPIC -I/usr/include/eigen3 -I/usr/local/include -I/usr/local/include/opencv -I/usr/include/vtk-5.8 -I/usr/include/pcl-1.7 -I/usr/include/ni -I/usr/include/openni2 -I/home/mclarry/Sophus -I/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/include    -o CMakeFiles/FastVO.dir/camera.cpp.o -c /home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/camera.cpp",
+  "file": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/camera.cpp"
+},
+{
+  "directory": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/build/src",
+  "command": "g++   -DDISABLE_PCAP -DDISABLE_PNG -DFastVO_EXPORTS -std=c++11 -march=native -O3  -Wno-deprecated -g -fPIC -I/usr/include/eigen3 -I/usr/local/include -I/usr/local/include/opencv -I/usr/include/vtk-5.8 -I/usr/include/pcl-1.7 -I/usr/include/ni -I/usr/include/openni2 -I/home/mclarry/Sophus -I/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/include    -o CMakeFiles/FastVO.dir/config.cpp.o -c /home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/config.cpp",
+  "file": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/config.cpp"
+},
+{
+  "directory": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/build/src",
+  "command": "g++   -DDISABLE_PCAP -DDISABLE_PNG -DFastVO_EXPORTS -std=c++11 -march=native -O3  -Wno-deprecated -g -fPIC -I/usr/include/eigen3 -I/usr/local/include -I/usr/local/include/opencv -I/usr/include/vtk-5.8 -I/usr/include/pcl-1.7 -I/usr/include/ni -I/usr/include/openni2 -I/home/mclarry/Sophus -I/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/include    -o CMakeFiles/FastVO.dir/visual_odometry.cpp.o -c /home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/visual_odometry.cpp",
+  "file": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/visual_odometry.cpp"
+},
+{
+  "directory": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/build/src",
+  "command": "g++   -DDISABLE_PCAP -DDISABLE_PNG -DFastVO_EXPORTS -std=c++11 -march=native -O3  -Wno-deprecated -g -fPIC -I/usr/include/eigen3 -I/usr/local/include -I/usr/local/include/opencv -I/usr/include/vtk-5.8 -I/usr/include/pcl-1.7 -I/usr/include/ni -I/usr/include/openni2 -I/home/mclarry/Sophus -I/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/include    -o CMakeFiles/FastVO.dir/icp_fr2model.cpp.o -c /home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/icp_fr2model.cpp",
+  "file": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/icp_fr2model.cpp"
+},
+{
+  "directory": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/build/src",
+  "command": "g++   -DDISABLE_PCAP -DDISABLE_PNG -DFastVO_EXPORTS -std=c++11 -march=native -O3  -Wno-deprecated -g -fPIC -I/usr/include/eigen3 -I/usr/local/include -I/usr/local/include/opencv -I/usr/include/vtk-5.8 -I/usr/include/pcl-1.7 -I/usr/include/ni -I/usr/include/openni2 -I/home/mclarry/Sophus -I/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/include    -o CMakeFiles/FastVO.dir/featurepoint.cpp.o -c /home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/featurepoint.cpp",
+  "file": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/src/featurepoint.cpp"
+},
+{
+  "directory": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/build/test",
+  "command": "g++   -DDISABLE_PCAP -DDISABLE_PNG -std=c++11 -march=native -O3  -Wno-deprecated -g -I/usr/include/eigen3 -I/usr/local/include -I/usr/local/include/opencv -I/usr/include/vtk-5.8 -I/usr/include/pcl-1.7 -I/usr/include/ni -I/usr/include/openni2 -I/home/mclarry/Sophus -I/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/include    -o CMakeFiles/VO_test.dir/VO_test.cpp.o -c /home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/test/VO_test.cpp",
+  "file": "/home/mclarry/SLAM-Learning/My_VO_fr2model_AICP_Autoliersratio/test/VO_test.cpp"
+}
+]

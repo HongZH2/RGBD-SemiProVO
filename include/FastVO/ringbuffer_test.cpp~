@@ -1,0 +1,19 @@
+#include </home/mclarry/SLAM-Learning/My_VO/include/FastVO/ringbuffer.h>
+#include <iostream>
+using namespace std;
+static int in = 0, out = 0;
+int enqueue(int value) { /* Add one item to the front of the queue*/
+  in++; /* Advance the index for next time */
+  if (in == 16) in = 0; /* Wrap around! */
+}
+int dequeue() { /* Remove one item to the end of the queue.*/
+  out++;
+  if (out == 16) out = 0;
+  return 0;
+}
+int main(int argv, char** argr)
+{
+ringbuffer rjf;
+rjf = ringbuffer(16)
+return 0;
+}
