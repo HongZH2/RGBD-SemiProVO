@@ -16,6 +16,7 @@ In the file "config/default.yaml", please modify your path of data file adn othe
 
 You can easily start to use it by the following steps in your terminal. /********************************************************************** 
 
+
 mkdir build 
 cd build 
 cmake .. 
@@ -25,6 +26,7 @@ bin/VO_test config/default.yaml
 
 /*********************************************************************** 
 /*********************************************************************** 
+
 --cmake_modules:
     FindCSparse.cmake 
     FindG2O.cmake 
@@ -45,6 +47,7 @@ bin/VO_test config/default.yaml
     visual_odometry.h 
 --test: 
       VO_test.cpp                               // this is the main function 
+      
   /***********************************************************************
 
 the output_file.txt is located on your path of dataset. You can visualize the result by following the instructions of TUM dataset Website.
