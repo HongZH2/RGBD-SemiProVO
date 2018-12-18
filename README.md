@@ -89,7 +89,7 @@ File Structure
 
 the output_file.txt is located on your path of dataset. You can visualize the result by following the instructions of TUM dataset Website.
 
-What's more, you can open the pose estimation method based on AICP algorithm in the icp_fr2model.cpp by modifying the bool variable 
+What's more, you can chose to use the pose estimation method based on AICP algorithm in the icp_fr2model.cpp by modifying the bool variable 
 
 ＂AICP_Estimation = true;＂
 
