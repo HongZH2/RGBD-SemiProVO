@@ -67,6 +67,8 @@ File Structure
 
     common_include.h
     
+    config.h
+    
     featurepoint.h 
     
     frame.h 
@@ -89,7 +91,7 @@ What's more, you can open the pose estimation method based on AICP algorithm in 
 
 ＂AICP_Estimation = true;＂
 
-Finally, feel free to contact me if you have any questions.
+Finally, feel free to contact me if you have any question.
 
 Email: mclarry@sjtu.edu.cn	
 
