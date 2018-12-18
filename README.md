@@ -14,11 +14,11 @@ fr1_xyz,fr2_xyz,fr2_rpy,fr3_static_? are recommended, and the performance of tes
 
 In the file "config/default.yaml", please modify your path of data file adn other parameters you want to change. For example, "dataset_dir: /home/mclarry/TUM_DATASET/rgbd_dataset_freiburg1_xyz" *Please note that you must associate the RGB images and Depth images by following the instructions of TUM Dataset Website
 
-You can easily start to use it by the following steps in your terminal. /********************************************************************** 
+You can easily start to use it by the following steps in your terminal. 
+/********************************************************************** 
 
-
-mkdir build 
-cd build 
+mkdir build
+cd build
 cmake .. 
 make
 
