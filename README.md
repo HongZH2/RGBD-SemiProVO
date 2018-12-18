@@ -95,6 +95,8 @@ What's more, you can chose to use the pose estimation method based on AICP algor
 
 Finally, feel free to contact me if you have any question.
 
+Paper: https://dl.acm.org/citation.cfm?id=3234666
+
 Email: mclarry@sjtu.edu.cn	
 
 Name: Hong Zhang
