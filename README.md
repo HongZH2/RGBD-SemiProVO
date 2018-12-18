@@ -26,25 +26,25 @@ bin/VO_test config/default.yaml
 /*********************************************************************** 
 /*********************************************************************** 
 --cmake_modules:
-　　FindCSparse.cmake 
-　　FindG2O.cmake 
+    FindCSparse.cmake 
+    FindG2O.cmake 
 --src:
- 　camera.cpp 
+    camera.cpp 
 　　config.cpp
- 　featurepoint.cpp
- 　frame.cpp 
+ 　 featurepoint.cpp
+ 　 frame.cpp 
 　　icp_fr2model.cpp 
 　　model.cpp 
 　　visual_odometry.cpp 
 --include/FastVO: 
-　　common_include.h
-　　featurepoint.h 
-　　frame.h 
-　　icp_fr2model.h 
-　　model.h 
-　　visual_odometry.h 
+    common_include.h
+    featurepoint.h 
+    frame.h 
+    icp_fr2model.h 
+    model.h 
+    visual_odometry.h 
 --test: 
-　　VO_test.cpp                               // this is the main function 
+      VO_test.cpp                               // this is the main function 
   /***********************************************************************
 
 the output_file.txt is located on your path of dataset. You can visualize the result by following the instructions of TUM dataset Website.
