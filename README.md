@@ -37,7 +37,10 @@ bin/VO_test config/default.yaml
 /*********************************************************************** 
 /*********************************************************************** 
 
+File Structure
+
 --cmake_modules:
+
     FindCSparse.cmake 
     
     FindG2O.cmake 
@@ -46,17 +49,17 @@ bin/VO_test config/default.yaml
 
     camera.cpp 
     
-　　config.cpp
-  
- 　 featurepoint.cpp
+    config.cpp
+    
+    featurepoint.cpp
    
- 　 frame.cpp 
-   
-　　icp_fr2model.cpp 
-  
-　　model.cpp 
-  
-　　visual_odometry.cpp 
+    frame.cpp 
+    
+    icp_fr2model.cpp 
+    
+    model.cpp 
+    
+    visual_odometry.cpp 
   
 --include/FastVO: 
 
@@ -85,5 +88,7 @@ What's more, you can open the pose estimation method based on AICP algorithm in 
 ＂AICP_Estimation = true;＂
 
 Finally, feel free to contact me if you have any questions.
+
 Email: mclarry@sjtu.edu.cn	
+
 Name: Hong Zhang
