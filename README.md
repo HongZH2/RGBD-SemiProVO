@@ -18,7 +18,9 @@ TUM RGBD dataset: https://vision.in.tum.de/data/datasets/rgbd-dataset
 Besides, the video sequences like 
 fr1_xyz,fr2_xyz,fr2_rpy,fr3_static_? are recommended, and the performance of testing on any other sequence is not good now. Please download at least one video sequence for the test from TUM Dataset.
 
-In the file "config/default.yaml", please modify your path of data file adn other parameters you want to change. For example, "dataset_dir: /home/mclarry/TUM_DATASET/rgbd_dataset_freiburg1_xyz" *Please note that you must associate the RGB images and Depth images by following the instructions of TUM Dataset Website
+In the file "config/default.yaml", please modify your path of data file adn other parameters you want to change. For example, "dataset_dir: /home/mclarry/TUM_DATASET/rgbd_dataset_freiburg1_xyz" 
+
+*Please note that you must associate the RGB images and Depth images by following the instructions of TUM Dataset Website
 
 You can easily start to use it by the following steps in your terminal. 
 /********************************************************************** 
