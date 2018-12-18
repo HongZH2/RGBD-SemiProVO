@@ -1,15 +1,15 @@
 This is a simple RGBD Visual Odometry system based on frame-to-model method. And it's a simplized version for the test. Before using this project, please assure that you have accomplished the installment of the following 3Dparties.
 
 
-  Eigen3; 
+  -Eigen3; 
   
-  Opencv(3.2 Recommended);
+  -Opencv(3.2 Recommended);
   
-  PCL(point cloud library 1.2 Required);
+  -PCL(point cloud library 1.2 Required);
   
-  Sophus(old version);
+  -Sophus(old version);
   
-  G2O(Recommended);
+  -G2O(Recommended);
 
 
 The performance of the presented VO system is evaluated by the benchmark dataset 
