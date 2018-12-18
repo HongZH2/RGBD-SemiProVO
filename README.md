@@ -25,6 +25,8 @@ In the file "config/default.yaml", please modify your path of data file adn othe
 You can easily start to use it by the following steps in your terminal. 
 /********************************************************************** 
 
+cd /FILE PATH
+
 mkdir build
 
 cd build
