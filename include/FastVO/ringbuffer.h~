@@ -1,0 +1,89 @@
+#ifndef RINGBUFFER_H
+#define RINGBUFFER_H
+#include <stddef>
+#include <vector>
+
+// adapted from: https://github.com/angrave/SystemProgramming/wiki/Synchronization,-Part-8:-Ring-Buffer-Example
+
+template <class T>
+class ringbuffer
+{
+public:
+    ringbuffer () = delete;
+    explicit ringbuffer (size_t size) : data (size), index_start (0), index_end (0) { }
+    ringbuffer (size_t size, T const & init)
+        : data (size)
+        , index_start (0), index_end (size - 1)
+    {
+        std::fill (data.begin (), data.end (), init);
+    }
+
+    void push_back (T const & value)
+    {
+        ++index_end;
+
+        if (index_end == data.size ())
+            index_end = 0;
+        if (index_start == index_end)
+            ++index_start;
+        if (index_start == data.size ())
+            index_start = 0;
+
+        data.at (index_end) = value;
+    }
+
+    T get (size_t const idx) const
+    {
+        int a = (index_start + idx) % data.size ();
+        return data.at (a);
+    }
+    T front () const { return data.at (index_start); }
+    T back () const { return data.at (index_end); }
+
+    T min () const
+    {
+        size_t index_result = index_start;
+
+        for (size_t i = index_start + 1; i < index_start + size (); ++i)
+            if (get (i) < get (index_result))
+                index_result = i;
+
+        return get (index_result);
+    }
+    T max () const
+    {
+        size_t index_result = index_start;
+
+        for (size_t i = index_start + 1; i < index_start + size (); ++i)
+            if (get (i) > get (index_result))
+                index_result = i;
+
+        return get (index_result);
+    }
+
+    void clear () { index_start = index_end = 0; }
+
+    size_t size () const
+    {
+        int s;
+
+        if (index_end > index_start)
+        {
+            s = index_end - index_start;
+        }
+        else
+        {
+            s = data.size () - index_start + index_end + 1;
+        }
+
+        return s;
+    }
+
+private:
+    std::vector <T> data;
+
+    size_t index_start; // index of first active element
+    size_t index_end; // index of last active element
+};
+
+#endif

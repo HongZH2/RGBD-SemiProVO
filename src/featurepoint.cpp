@@ -1,0 +1,76 @@
+
+/*
+Copyright 2018. All rights reserved.
+Shanghai Jiao Tong University, China
+
+Authors: Hong Zhang
+
+'An Improved Fast Visual Odometry' is free software; you can redistribute it
+and/or modify it under theterms of the GNU General Public License as published
+by the Free Software Foundation; either version 2 of the License, or any later version.
+
+'An Improved Fast Visual Odometry' is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+'An Improved Fast Visual Odometry' ; if not, you can send the e-mail to:
+mclarry@sjtu.edu.cn
+*
+*/
+#include <opencv2/calib3d/calib3d.hpp>
+#include "FastVO/featurepoint.h"
+#include "FastVO/config.h"
+namespace FastVO
+{
+    FeaturePoint::FeaturePoint(): ptstate_(NEW), id_(0), pts_3d_( Vector3d(0,0,0) ), pt_covariance_( Eigen::Matrix3d::Zero() )
+    {
+        variance_uu_ = Config::get<double>("variance.uu");
+        variance_vv_ = Config::get<double>("variance.vv");
+    }
+    FeaturePoint::FeaturePoint( unsigned long id, Vector3d pts_3d ): ptstate_(NEW), id_( id ), pts_3d_(pts_3d), pt_covariance_( Eigen::Matrix3d::Zero() )
+    {
+         variance_uu_ = Config::get<double>("variance.uu");
+         variance_vv_ = Config::get<double>("variance.vv");
+    }
+    FeaturePoint::~FeaturePoint()
+    {
+    }
+    void FeaturePoint::calculateVarMat( cv::Point2d keypoint_curr, Camera::Ptr camera, double depth , bool skip_cur_point_)
+    {
+        double mean_u_; // the mean value and the variance value of the noisy measurement in the camera coodinate
+        double mean_v_;
+        double mean_z_;
+        double variance_xx_; //the variance value of the noisy measurement in the world coordinate
+        double variance_xy_;
+        double variance_xz_;
+        double variance_yy_;
+        double variance_yz_;
+        double variance_zz_;
+        mean_u_ = cvRound(keypoint_curr.x);
+        mean_v_ = cvRound( keypoint_curr.y); 
+        mean_z_ = depth;
+       // pts_3d_means_<<mean_u_, mean_v_, mean_z_;
+        variance_zz_ = pow( 1.45 * 0.001 * pow( mean_z_, 2 ), 2 );
+        variance_xx_ = ( variance_zz_ * ( mean_u_ - camera->cx_ ) * ( mean_v_ - camera->cy_ ) + variance_uu_ * (pow( mean_z_, 2 ) + variance_zz_ ) ) / pow( camera->fx_, 2 );
+        variance_yy_ = ( variance_zz_ * ( mean_u_ - camera->cx_ ) * ( mean_v_ - camera->cy_ ) + variance_vv_ * (pow( mean_z_, 2 ) + variance_zz_ ) ) / pow( camera->fy_, 2 );
+        variance_xz_ = variance_zz_ * ( mean_u_ - camera->cx_ ) /camera->fx_;
+        variance_yz_ = variance_zz_ * ( mean_v_ - camera->cy_ ) / camera->fy_;
+        variance_xy_ = variance_zz_ * ( mean_u_ - camera->cx_ ) * ( mean_v_ - camera->cy_ ) / ( camera->fx_ * camera->fy_ );
+        pt_covariance_<< variance_xx_, variance_xy_, variance_xz_,
+                                      variance_xy_, variance_yy_, variance_yz_,
+                                     variance_xz_, variance_yz_,  variance_zz_;
+        if(variance_xx_ <= 0 || variance_yy_ <= 0 ||variance_zz_ <= 0)
+        {
+            skip_cur_point_ = true;
+        }
+        else
+        {
+            skip_cur_point_ = false;
+        }
+    }
+    FeaturePoint::Ptr FeaturePoint::createFeaturePoint( unsigned long factory_id=0)
+    {
+        return FeaturePoint::Ptr( new FeaturePoint( factory_id, Vector3d(0,0,0) ) );
+    }
+}

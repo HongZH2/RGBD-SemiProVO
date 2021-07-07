@@ -1,0 +1,29 @@
+%YAML:1.0
+# data
+# the tum dataset directory, change it to yours!
+dataset_dir: /home/mclarry/TUM_DATASET/rgbd_dataset_freiburg3_sitting_static
+# camera intrinsics
+# fr1
+camera.fx: 517.3
+camera.fy: 516.5
+camera.cx: 325.1
+camera.cy: 249.7
+camera.depth_scale: 5000
+# feature points paras
+variance.uu:2
+variance.vv:2
+# Model paras
+model.maximun: 5000
+# VO paras
+minnum_features: 200
+maxnum_features: 5000
+quality_Level: 0.01
+min_Distance: 4
+blockSize: 3
+useHarrisDetector: 0 
+Shi_Tomasi_k: 0.04
+# ICP paras
+maxnum.iteration: 25
+closetpoint.k: 10
+tolerance.t: 0.000001
+tolerance.r: 0.0000009

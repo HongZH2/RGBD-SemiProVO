@@ -1,0 +1,38 @@
+/*
+Copyright 2011. All rights reserved.
+Institute of Measurement and Control Systems
+Shanghai Jiao Tong University, China
+
+Authors: Hong Zhang
+
+'An Improved Fast Visual Odometry' is free software; you can redistribute it
+and/or modify it under theterms of the GNU General Public License as published
+by the Free Software Foundation; either version 2 of the License, or any later version.
+
+'An Improved Fast Visual Odometry' is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+'An Improved Fast Visual Odometry' ; if not, you can send the e-mail to:
+mclarry@sjtu.edu.cn
+*
+*/
+#ifndef COMMON_INCLUDE_H
+#define COMMON_INCLUDE_H
+// define the commonly included file to avoid a long include list
+// Eigen
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+using Eigen::Vector2d;
+using Eigen::Vector3d;
+// Opencv
+#include <opencv/core/core.hpp>
+using cv::Mat;
+// std
+#include <string>
+#include <vector>
+#include <iostream>
+using namespace std;
+#endif
+
